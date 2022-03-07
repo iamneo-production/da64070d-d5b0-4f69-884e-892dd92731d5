@@ -1,0 +1,3 @@
+QUERIES
+
+select * FROM ELECTION;

@@ -1,3 +1,0 @@
-QUERIES
-
-select * FROM ELECTION;

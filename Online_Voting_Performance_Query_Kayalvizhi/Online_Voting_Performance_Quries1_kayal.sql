@@ -47,23 +47,23 @@ CREATE OR REPLACE PROCEDURE TOTAL_CAND_2004
 IS 
    TYPE NAMETYPE IS TABLE OF VARCHAR(100);
    TYPE CAND_COUNT IS TABLE OF NUMBER;
-   STATE_NAME NAMETYPE;
-   COUNT_CAND CAND_COUNT;
+   state NAMETYPE;
+   count_cand CAND_COUNT;
 BEGIN
    SELECT 
       ST_NAME,
       COUNT(CAND_NAME) 
    BULK COLLECT INTO 
-      STATE_NAME,
-      COUNT_CAND
+     state,
+      count_cand
    FROM 
       ELECTION 
    WHERE 
       YEAR = 2004 
    GROUP BY 
       ST_NAME;
-  FOR IDX IN 1..STATE_NAME.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE(STATE_NAME(IDX)||'  '||COUNT_CAND(IDX));
+  FOR idx IN 1..state.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE(state(idx))||'  '||count_cand(idx));
   END LOOP;
 END;
 /
@@ -85,22 +85,24 @@ GROUP BY
 CREATE OR REPLACE PROCEDURE FEMALE_CAND_YEAR
 IS
    TYPE CAND_COUNT IS TABLE OF NUMBER;
-   FEMALE_CAND CAND_COUNT;
-   ELECTION_YEAR CAND_COUNT;
+   female_cand CAND_COUNT;
+   election_year CAND_COUNT;
 BEGIN
    SELECT 
       COUNT(CAND_SEX), 
       YEAR 
-   BULK COLLECT INTO 
-         FEMALE_CAND,ELECTION_YEAR
+   BULK 
+      COLLECT 
+   INTO 
+         female_cand,election_year
    FROM 
       ELECTION 
    WHERE 
       CAND_SEX = 'F' 
    GROUP BY 
       YEAR;
-  FOR IDX IN 1..FEMALE_CAND.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE(ELECTION_YEAR(IDX)||'  '||FEMALE_CAND(IDX));
+  FOR idx IN 1..female_cand.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE(election_year(IDX_DOCID_COUNT)||'  '||female_cand(idx));
   END LOOP;
 END;
 /
@@ -121,19 +123,19 @@ AND
 CREATE OR REPLACE FUNCTION BENGAL_CAND_2014
 RETURN VARCHAR
 IS
-   BENGAL_CAND NUMBER;
+   bengal_cand NUMBER;
 BEGIN
    SELECT 
       COUNT(CAND_NAME) 
    INTO 
-      BENGAL_CAND
+      bengal_cand
    FROM 
       ELECTION
    WHERE 
       ST_NAME = 'West Bengal' 
    AND 
       YEAR = 2014;
-   RETURN 'Total Bengal Candidates are : '||BENGAL_CAND;
+   RETURN 'Total Bengal Candidates are : '||bengal_cand;
 END;
 /
 --------------------------------------------------------------------------------------------------
@@ -153,29 +155,30 @@ GROUP BY
    ST_NAME ;
 
 -->Procedure
+
 CREATE OR REPLACE PROCEDURE CAND_COUNT_YEAR
 IS
    TYPE COUNT_TYPE IS TABLE OF NUMBER;
    TYPE NAME_TYPE IS TABLE OF VARCHAR(100);
-   STATE NAME_TYPE;
-   ELECTION_YEAR COUNT_TYPE;
-   CAND_COUNT COUNT_TYPE;
+   state NAME_TYPE;
+   election_year COUNT_TYPE;
+   cand_count COUNT_TYPE;
 BEGIN
    SELECT 
       ST_NAME,
       YEAR,
       COUNT(CAND_NAME)
    BULK COLLECT INTO 
-      STATE,
-      ELECTION_YEAR,
-      CAND_COUNT
+   state,
+   election_year,
+   cand_count,
    FROM 
       ELECTION 
    GROUP BY 
       YEAR,
       ST_NAME ;
    FOR IDX IN 1..STATE.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE(STATE(IDX)||'  '||ELECTION_YEAR(IDX)||' '||CAND_COUNT(IDX));
+      DBMS_OUTPUT.PUT_LINE(state(idx)||'  '||election_year(idx)||' '||cand_count(idx));
    END LOOP;
 END;
 /
@@ -199,7 +202,7 @@ ORDER BY
 -->Procedure
 CREATE OR REPLACE PROCEDURE TOP5_PARTIES
 IS
-   TOP_PARTIES VARCHAR(100);
+   top_parties VARCHAR(100);
    CURSOR EXP_CUR 
    IS
       SELECT 
@@ -217,9 +220,9 @@ IS
 BEGIN
       OPEN EXP_CUR;
       LOOP
-         FETCH EXP_CUR INTO TOP_PARTIES;
+         FETCH EXP_CUR INTO top_parties;
          EXIT WHEN EXP_CUR%NOTFOUND;
-         DBMS_OUTPUT.PUT_LINE(TOP_PARTIES);
+         DBMS_OUTPUT.PUT_LINE(top_parties);
       END LOOP;
       CLOSE EXP_CUR;
 END;
@@ -245,15 +248,15 @@ CREATE OR REPLACE PROCEDURE BJP_VOTES_1987
 IS
    TYPE COUNT_TYPE IS TABLE OF NUMBER;
    TYPE NAME_TYPE IS TABLE OF VARCHAR(100);
-   STATE NAME_TYPE;
-   VOTES COUNT_TYPE;
+   state NAME_TYPE;
+   votes COUNT_TYPE;
 BEGIN
    SELECT 
       ST_NAME,
       SUM(TOTVOTPOLL) 
    BULK COLLECT INTO 
-      STATE,
-      VOTES
+      state,
+      votes
    FROM 
       ELECTION 
    WHERE 
@@ -262,8 +265,8 @@ BEGIN
       YEAR = 1989
    GROUP BY 
       ST_NAME;
-   FOR IDX IN 1..STATE.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE(STATE(IDX)||'  '||VOTES(IDX));
+   FOR idx IN 1..STATE.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE(state(idx)||'  '||votes(idx));
    END LOOP;
 END;
 ----------------------------------------------------------------------------------------------------
@@ -283,19 +286,19 @@ AND
 CREATE OR REPLACE FUNCTION AP_BJPVOT_1987
 RETURN VARCHAR
 IS
-   AP_VOTES NUMBER;
+   ap_votes NUMBER;
 BEGIN
    SELECT 
       SUM(TOTVOTPOLL) 
    INTO 
-      AP_VOTES
+     ap_votes
    FROM 
       ELECTION 
    WHERE 
       ST_NAME = 'Andhra Pradesh' 
    AND 
       YEAR = 1989;
-   RETURN 'Total BJP Votes in Andhra Pradesh : '||AP_VOTES;
+   RETURN 'Total BJP Votes in Andhra Pradesh : '||ap_votes;
 END;
 /
 ---------------------------------------------------------------------------------------------------    
@@ -303,7 +306,7 @@ END;
 
 -->Query
 SELECT 
-      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) 
+    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) 
 FROM 
    ELECTION 
 WHERE 
@@ -317,12 +320,12 @@ AND
 CREATE OR REPLACE FUNCTION GOA_BJPPER_2003
 RETURN VARCHAR
 IS
-   GOA_PERCENT NUMBER;
+   goa_percent NUMBER;
 BEGIN
    SELECT 
       ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) 
    INTO 
-      GOA_PERCENT
+      goa_percent
    FROM 
       ELECTION 
    WHERE 
@@ -331,23 +334,40 @@ BEGIN
       ST_NAME = 'Goa' 
    AND 
       YEAR = 2009 ;
-   RETURN 'Percentage of BJP Votes in Goa State : '||GOA_PERCENT;
+   RETURN 'Percentage of BJP Votes in Goa State : '||goa_percent;
 END;
 /
 ----------------------------------------------------------------------------------------------------        
 -->9. How many times has BJP gotten an Above 50% vote?
 
-SELECT 
-   PC_NAME,
-   COUNT(PC_NAME) 
-FROM 
-   ELECTION 
-WHERE 
-   PARTYABBRE = 'BJP'
-GROUP BY 
-   PC_NAME 
-HAVING 
-   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,0) > 40;
+--> Procedure
+
+CREATE OR REPLACE PROCEDURE TOTAL_VOTE_BJP_50
+IS
+   CURSOR bjp
+   IS 
+   SELECT 
+   DISTINCT 
+      YEAR,   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
+   FROM 
+      ELECTION 
+   WHERE 
+      PARTYABBRE = 'BJP' 
+   GROUP BY 
+      YEAR
+   HAVING 
+      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20;
+   TYPE bjp_tab IS TABLE OF bjp%ROWTYPE INDEX BY BINARY_INTEGER;
+   v_bjp bjp_tab;
+BEGIN
+   OPEN bjp;
+   FETCH bjp BULK COLLECT INTO v_bjp;
+      DBMS_OUTPUT.PUT_LINE('Total count BJP got 50% vote '||v_bjp.COUNT);
+   CLOSE bjp;
+END;
+/
+
+--------------------------------------------------------------------------------------
 
 -->10. what is the state list the BJP gets below 75% vote?
 
@@ -361,47 +381,79 @@ GROUP BY
    ST_NAME 
 HAVING  
    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,0) < 75;
+
+--> Procedure
+
+CREATE OR REPLACE PROCEDURE STATE_BJP_VOTE75
+AS
+   percent NUMBER;
+BEGIN
+   FOR C IN ( SELECT DISTINCT ST_NAME,ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
+   AS 
+      percent 
+   FROM 
+      ELECTION
+   WHERE 
+      PARTYABBRE = 'BJP' 
+   GROUP BY 
+      ST_NAME
+   HAVING 
+      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20)
+    LOOP
+      DBMS_OUTPUT.PUT_LINE(C.ST_NAME || ' : ' || C.percent||'%');
+    END LOOP;
+END;
+/
+
 ----------------------------------------------------------------------------------------------------
--->REFERENCE
+
+-->   PL/SQL Procedure
+--1.
 BEGIN
    TOTAL_CAND_2004();
 END;
 /
-
+--2.
 BEGIN
    FEMALE_CAND_YEAR();
 END;
 /
-
+--3.
 SELECT 
    BENGAL_CAND_2014() 
 FROM 
    DUAL;
-
+--4.
 BEGIN
    CAND_COUNT_YEAR();
 END;
 /
-
+--5.
 BEGIN
    TOP5_PARTIES();
 END;
 /
-
+--6.
 BEGIN
    BJP_VOTES_1987();
 END;
 /
-
+--7.
 SELECT 
    AP_BJPVOT_1987() 
 FROM 
    DUAL;
- 
+--8. 
 SELECT 
    GOA_BJPPER_2003() 
 FROM 
    DUAL;
+--9.
+EXECUTE TOTAL_VOTE_BJP_50();
+--10.
+EXECUTE STATE_BJP_VOTE75();
+
+-------------------------------------------------------------------------
 
 DECLARE
     starting_time  TIMESTAMP WITH TIME ZONE;

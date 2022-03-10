@@ -75,7 +75,20 @@ END;
 ------------------------------------------------------------------------------------
 
 -- 3. Find how many times congress gets above 50% vote in Bihar state?
- 
+--> Query
+SELECT 
+DISTINCT YEAR,
+    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
+FROM 
+    ELECTION 
+WHERE 
+    PARTYABBRE = 'INC' 
+GROUP BY 
+    YEAR
+HAVING 
+    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20;
+
+
  --> Procedure
 CREATE OR REPLACE PROCEDURE TOTAL_VOTE_INC_50
 IS

@@ -306,7 +306,7 @@ END;
 
 -->Query
 SELECT 
-    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) 
+    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) "Bjp Percentage"
 FROM 
    ELECTION 
 WHERE 
@@ -340,6 +340,19 @@ END;
 ----------------------------------------------------------------------------------------------------        
 -->9. How many times has BJP gotten an Above 50% vote?
 
+--> Query
+SELECT 
+DISTINCT 
+   YEAR,   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
+FROM 
+   ELECTION 
+WHERE 
+   PARTYABBRE = 'BJP' 
+GROUP BY 
+   YEAR
+HAVING 
+   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20;
+
 --> Procedure
 
 CREATE OR REPLACE PROCEDURE TOTAL_VOTE_BJP_50
@@ -362,7 +375,7 @@ IS
 BEGIN
    OPEN bjp;
    FETCH bjp BULK COLLECT INTO v_bjp;
-      DBMS_OUTPUT.PUT_LINE('Total count BJP got 50% vote '||v_bjp.COUNT);
+      DBMS_OUTPUT.PUT_LINE('Total count BJP got 20% vote : '||v_bjp.COUNT);
    CLOSE bjp;
 END;
 /
@@ -371,17 +384,19 @@ END;
 
 -->10. what is the state list the BJP gets below 75% vote?
 
-SELECT 
-   ST_NAME 
-FROM 
-   ELECTION 
-WHERE 
-   PARTYABBRE = 'BJP'
-GROUP BY 
-   ST_NAME 
-HAVING  
-   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,0) < 75;
+-->Query
 
+SELECT DISTINCT ST_NAME,ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
+   AS 
+      percent 
+   FROM 
+      ELECTION
+   WHERE 
+      PARTYABBRE = 'BJP' 
+   GROUP BY 
+      ST_NAME
+   HAVING 
+      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 < 75;
 --> Procedure
 
 CREATE OR REPLACE PROCEDURE STATE_BJP_VOTE75
@@ -398,7 +413,7 @@ BEGIN
    GROUP BY 
       ST_NAME
    HAVING 
-      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20)
+      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 <75)
     LOOP
       DBMS_OUTPUT.PUT_LINE(C.ST_NAME || ' : ' || C.percent||'%');
     END LOOP;

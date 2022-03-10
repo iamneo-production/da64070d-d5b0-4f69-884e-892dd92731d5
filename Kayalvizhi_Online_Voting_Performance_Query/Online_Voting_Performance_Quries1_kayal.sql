@@ -27,8 +27,7 @@ FROM
 
 /*
 	
-Plan hash value: 3594639672
-	
+Plan hash value: 3594639672	
 ------------------------------------------------------------------------------
 	
 | Id | Operation | Name | Rows | Bytes | Cost (%CPU)| Time |
@@ -171,7 +170,7 @@ BEGIN
    BULK COLLECT INTO 
    state,
    election_year,
-   cand_count,
+   cand_count
    FROM 
       ELECTION 
    GROUP BY 
@@ -187,17 +186,16 @@ END;
 
 -->Query
 SELECT 
-   DISTINCT PARTYABBRE
+   PARTYNAME 
 FROM 
    ELECTION 
 WHERE 
    ST_NAME = 'Uttar Pradesh' 
 AND 
-   ROWNUM <= 5
-AND 
-   YEAR = 2014
-ORDER BY 
-   TOTVOTPOLL ASC FETCH FIRST 5 ROWS ONLY;
+   YEAR = 2014 
+GROUP BY 
+   PARTYNAME
+ORDER BY SUM(TOTVOTPOLL) DESC FETCH FIRST 5 ROWS ONLY;
 
 -->Procedure
 CREATE OR REPLACE PROCEDURE TOP5_PARTIES
@@ -206,17 +204,17 @@ IS
    CURSOR EXP_CUR 
    IS
       SELECT 
-         DISTINCT PARTYABBRE
+         PARTYNAME 
       FROM 
          ELECTION 
       WHERE 
-         ST_NAME = 'Uttar Pradesh'
-      AND
-         ROWNUM <= 5 
+         ST_NAME = 'Uttar Pradesh' 
       AND 
-         YEAR = 2014
+         YEAR = 2014 
+      GROUP BY 
+         PARTYNAME
       ORDER BY 
-         TOTVOTPOLL DESC FETCH FIRST 5 ROWS ONLY;
+         SUM(TOTVOTPOLL) DESC FETCH FIRST 5 ROWS ONLY;
 BEGIN
       OPEN EXP_CUR;
       LOOP
@@ -339,89 +337,72 @@ END;
 /
 ----------------------------------------------------------------------------------------------------        
 -->9. How many times has BJP gotten an Above 50% vote?
-
 --> Query
 SELECT 
-DISTINCT 
-   YEAR,   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
+   COUNT(1) 
 FROM 
    ELECTION 
 WHERE 
    PARTYABBRE = 'BJP' 
-GROUP BY 
-   YEAR
-HAVING 
-   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20;
+AND 
+   (TOTVOTPOLL)/(ELECTORS) * 100 > 50;
 
 --> Procedure
-
 CREATE OR REPLACE PROCEDURE TOTAL_VOTE_BJP_50
 IS
-   CURSOR bjp
-   IS 
-   SELECT 
-   DISTINCT 
-      YEAR,   ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
-   FROM 
-      ELECTION 
+   cnt NUMBER;
+BEGIN
+   SELECT
+      COUNT(1)
+   INTO
+      cnt
+   FROM
+      ELECTION
    WHERE 
       PARTYABBRE = 'BJP' 
-   GROUP BY 
-      YEAR
-   HAVING 
-      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20;
-   TYPE bjp_tab IS TABLE OF bjp%ROWTYPE INDEX BY BINARY_INTEGER;
-   v_bjp bjp_tab;
-BEGIN
-   OPEN bjp;
-   FETCH bjp BULK COLLECT INTO v_bjp;
-      DBMS_OUTPUT.PUT_LINE('Total count BJP got 20% vote : '||v_bjp.COUNT);
-   CLOSE bjp;
+   AND 
+      (TOTVOTPOLL)/(ELECTORS) * 100 >50;
+
+   DBMS_OUTPUT.PUT_LINE('Total count BJP got 50% vote : '||cnt);
 END;
 /
 
 --------------------------------------------------------------------------------------
-
 -->10. what is the state list the BJP gets below 75% vote?
 
 -->Query
 
-SELECT DISTINCT ST_NAME,ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
-   AS 
-      percent 
-   FROM 
-      ELECTION
-   WHERE 
-      PARTYABBRE = 'BJP' 
-   GROUP BY 
-      ST_NAME
-   HAVING 
-      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 < 75;
---> Procedure
+SELECT 
+   ST_NAME 
+FROM 
+   ELECTION WHERE PARTYABBRE = 'BJP' 
+AND 
+   (TOTVOTPOLL)/(ELECTORS) * 100 < 75
+GROUP BY 
+   ST_NAME; 
 
+--> Procedure
 CREATE OR REPLACE PROCEDURE STATE_BJP_VOTE75
 AS
    percent NUMBER;
 BEGIN
-   FOR C IN ( SELECT DISTINCT ST_NAME,ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 
-   AS 
-      percent 
-   FROM 
-      ELECTION
-   WHERE 
-      PARTYABBRE = 'BJP' 
-   GROUP BY 
-      ST_NAME
-   HAVING 
-      ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 <75)
+   FOR C IN ( SELECT 
+                  ST_NAME 
+               FROM 
+                  ELECTION 
+               WHERE 
+                  PARTYABBRE = 'BJP' 
+               AND 
+                  (TOTVOTPOLL)/(ELECTORS) * 100 < 75 
+               GROUP BY 
+                  ST_NAME)
     LOOP
-      DBMS_OUTPUT.PUT_LINE(C.ST_NAME || ' : ' || C.percent||'%');
+      DBMS_OUTPUT.PUT_LINE(C.ST_NAME);
     END LOOP;
 END;
 /
 
 ----------------------------------------------------------------------------------------------------
-
 -->   PL/SQL Procedure
 --1.
 BEGIN

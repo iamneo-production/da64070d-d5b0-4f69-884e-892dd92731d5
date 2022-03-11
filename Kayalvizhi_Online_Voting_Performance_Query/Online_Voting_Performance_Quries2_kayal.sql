@@ -304,3 +304,5 @@ BEGIN
    DBMS_OUTPUT.PUT_LINE('Time = ' || TO_CHAR(ending_time - starting_time));
 END;
 /
+
+--Time = +000000000 00:00:00.010041000

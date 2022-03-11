@@ -1,7 +1,23 @@
+SELECT 
+    ELECTION_ID, 
+    ELECTION_DATE,
+    RESULT_DATE
+FROM 
+    ELECTION;
+----------------------------------------------------------
+SELECT * FROM ADDRESS;
+SELECT 
+    V.FIRST_NAME,V.DATE_OF_BIRTH,V.PASSWORD,A.DISTRICT_ID
+FROM
+    VOTER V ,ADDRESS A
+WHERE 
+    V.AADHAAR = A.VAADHAAR AND A.ZIP_CODE = 522433;
+----------------------------------------------------------------        
 CREATE OR REPLACE PROCEDURE LOGIN(V_USER_ID VARCHAR,V_PASSWORD VARCHAR)
 IS
     U_USER_ID VARCHAR(32);
     U_PASSWORD VARCHAR(32);
+    U_CAND VARCHAR(100);
 BEGIN
     SELECT 
         AADHAAR,
@@ -12,15 +28,20 @@ BEGIN
     FROM 
         VOTER 
     WHERE 
-        AADHAAR = V_USER_ID;
+        AADHAAR = V_USER_ID;   
     IF V_USER_ID = U_USER_ID AND  V_PASSWORD = U_PASSWORD THEN
-        DBMS_OUTPUT.PUT_LINE("LOGGED IN");
+        DBMS_OUTPUT.PUT_LINE('LOGGEDIN');
     ELSE
-        DBMS_OUTPUT.PUT_LINE("ERROR");   
+        DBMS_OUTPUT.PUT_LINE('ERROR');   
     END IF;
 END;
 /
 
+SELECT * FROM VOTER;
+
+BEGIN
+   LOGIN(' 8168 4719 1549 ',' sAry4I4 ');
+END;
 
 
 

@@ -113,3 +113,38 @@ SELECT count(*)  FROM ELECTION WHERE PARTYABBRE = 'BJP' and sum(TOTVOTPOLL)/(ELE
 SELECT distinct(ST_NAME ) FROM ELECTION WHERE PARTYABBRE = 'BJP' AND (TOTVOTPOLL)/(ELECTORS) * 100 < 75 GROUP BY ST_NAME; 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

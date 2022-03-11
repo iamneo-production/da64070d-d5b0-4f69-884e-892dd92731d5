@@ -1,4 +1,4 @@
---performancequery set 2
+--performance procedure query set 2
 
 --1. Write a SQL query to calculate total votes Got BJP in Bihar State in 1996?
 set serveroutput on;
@@ -139,7 +139,7 @@ end;
 ------  time complexity
 /*
 declare
-t1 timestamp;
+gitt1 timestamp;
 t2 timestamp;
 begin
 t1:=systimestamp;

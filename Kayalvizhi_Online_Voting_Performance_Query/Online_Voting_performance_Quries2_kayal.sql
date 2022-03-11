@@ -3,16 +3,16 @@
 -->1. Display the BJP candidate list participated at state Andaman & Nicobar Islands in the year 1984?
 
 ---> Query
-  SELECT 
-    CAND_NAME "Candidates"
-  FROM 
-    ELECTION 
-  WHERE 
-    PARTYABBRE = 'BJP' 
-  AND 
-    ST_NAME = 'Andaman & Nicobar Islands' 
-  AND 
-    YEAR = 2014;
+SELECT 
+  CAND_NAME "Candidates"
+FROM 
+  ELECTION 
+WHERE 
+  PARTYABBRE = 'BJP' 
+AND 
+  ST_NAME = 'Andaman & Nicobar Islands' 
+AND 
+  YEAR = 2014;
 
 --> Procedure
 
@@ -40,14 +40,14 @@ END;
 --2.How many Male Candidates participated in elections in each state?
 
 --> Query
-  SELECT 
-    ST_NAME "State" ,COUNT(CAND_NAME) "Candidates Count"
-  FROM 
-    ELECTION 
-  WHERE 
-    CAND_SEX = 'M' 
-  GROUP BY 
-    ST_NAME;
+SELECT 
+  ST_NAME "State" ,COUNT(CAND_NAME) "Candidates Count"
+FROM 
+  ELECTION 
+WHERE 
+  CAND_SEX = 'M' 
+GROUP BY 
+  ST_NAME;
 
 --> Procedure
 
@@ -68,7 +68,7 @@ BEGIN
     ST_NAME;
   FOR idx IN 1..state.COUNT
   LOOP
-   DBMS_OUTPUT.PUT_LINE(state(idx)||'  '||cant_count(idx));
+   DBMS_OUTPUT.PUT_LINE(state(idx)||'  '||cand_count(idx));
   END LOOP;
 END;
 /
@@ -78,14 +78,46 @@ END;
 
 -->Query
 SELECT 
-DISTINCT
-  (PARTYNAME) "Parties"
+  DISTINCT (PARTYNAME) "Parties"
 FROM 
   ELECTION 
 ORDER BY 
-  PARTYNAME 
-DESC;
+  PARTYNAME DESC;
 
+EXPLAIN PLAN FOR
+  SELECT 
+    DISTINCT (PARTYNAME) "Parties"
+  FROM 
+    ELECTION 
+  ORDER BY 
+    PARTYNAME DESC;
+
+SELECT
+    PLAN_TABLE_OUTPUT
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY);
+/*
+	
+	
+PLAN_TABLE_OUTPUT
+	
+Plan hash value: 2465312145
+	
+	
+-------------------------------------------------------------------------------
+	
+| Id | Operation | Name | Rows | Bytes | Cost (%CPU)| Time |
+	
+-------------------------------------------------------------------------------
+	
+| 0 | SELECT STATEMENT | | 1424 | 21360 | 619 (2)| 00:00:01 |
+	
+| 1 | SORT UNIQUE | | 1424 | 21360 | 616 (1)| 00:00:01 |
+	
+| 2 | TABLE ACCESS FULL| ELECTION | 73081 | 1070K| 239 (1)| 00:00:01 |
+	
+-------------------------------------------------------------------------------
+*/
 --> Procedure
 
 CREATE OR REPLACE PROCEDURE PARTIES
@@ -94,8 +126,7 @@ IS
   party NAME_TYPE;
 BEGIN
   SELECT 
-  DISTINCT
-    (PARTYNAME) 
+    DISTINCT(PARTYNAME) 
   BULK 
     COLLECT 
   INTO 
@@ -103,8 +134,7 @@ BEGIN
   FROM 
     ELECTION 
   ORDER BY 
-    PARTYNAME 
-  DESC;
+    PARTYNAME DESC;
   FOR idx IN 1.. party.COUNT
   LOOP
    DBMS_OUTPUT.PUT_LINE( party(idx));
@@ -115,14 +145,14 @@ END;
 
 --4. Find how many Candidates participated in the year West Bengal 1988? 
 --> Query
-  SELECT 
-    COUNT(CAND_NAME) "Candidates Count"
-  FROM 
-    ELECTION
-  WHERE 
-    ST_NAME = 'West Bengal'
-  AND  
-    YEAR = 2014;
+SELECT 
+  COUNT(CAND_NAME) "Candidates Count"
+FROM 
+  ELECTION
+WHERE 
+  ST_NAME = 'West Bengal'
+AND  
+  YEAR = 2014;
 
 --> Function
 
@@ -211,7 +241,7 @@ Plan hash value: 3362854993
 
 --> Procedure
 
-CREATE OR REPLACE PROCEDURE PARTIES
+CREATE OR REPLACE PROCEDURE TAMILNADU_CAND_LIST_YEAR
 IS
   TYPE NAME_TYPE IS TABLE OF VARCHAR(100);
   TYPE COUNT_TYPE IS TABLE OF NUMBER;
@@ -260,6 +290,6 @@ FROM
   DUAL;
 --5.
 BEGIN
-  PARTIES();
+  TAMILNADU_CAND_LIST_YEAR();
 END;
 /

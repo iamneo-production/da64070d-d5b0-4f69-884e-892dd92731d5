@@ -163,6 +163,22 @@ WHERE
 ORDER BY 
     YEAR;
 
+EXPLAIN PLAN FOR
+    SELECT 
+        YEAR   "Election Year",  CAND_NAME  "Candidates"
+    FROM 
+        ELECTION 
+    WHERE 
+        ST_NAME = 'Sikkim'
+    ORDER BY 
+        YEAR;
+
+SELECT
+    PLAN_TABLE_OUTPUT
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY);
+
+
 --> Procedure
 
 CREATE OR REPLACE PROCEDURE SIK_CAND_YEAR

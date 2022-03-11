@@ -8,8 +8,41 @@ FROM
     ELECTION
 WHERE 
     ST_NAME = 'Bihar' 
-AND YEAR = 1996;
+AND 
+    YEAR = 1996;
 
+EXPLAIN PLAN FOR
+   SELECT 
+       SUM(TOTVOTPOLL) "Votes"
+   FROM 
+       ELECTION
+   WHERE 
+       ST_NAME = 'Bihar' 
+   AND 
+       YEAR = 1996;
+
+SELECT
+    PLAN_TABLE_OUTPUT
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY);
+
+
+Plan hash value: 2055522871
+	
+	
+--------------------------------------------------------------------------------
+	
+| Id | Operation | Name | Rows | Bytes | Cost (%CPU)| Time |
+	
+--------------------------------------------------------------------------------
+	
+| 0 | SELECT STATEMENT | | 1 | 21 | 10 (0)| 00:00:01 |
+	
+| 1 | SORT AGGREGATE | | 1 | 21 | | |
+	
+|* 2 | INDEX RANGE SCAN| ELECTION_I | 1474 | 30954 | 10 (0)| 00:00:01 |
+	
+--------------------------------------------------------------------------------
 -->Function
 
 CREATE OR REPLACE FUNCTION BIHAR_VOT_1996
@@ -26,7 +59,7 @@ BEGIN
     WHERE 
         ST_NAME = 'Bihar' 
     AND YEAR = 1996;
-    RETURN 'Total Goa Votes for BJP in the year of 1996 : '||bjp_vot;
+    RETURN 'Total Bihar Votes for BJP in the year of 1996 : '||bjp_vot;
 END;
 /
 --------------------------------------------------------------------------------------------
@@ -87,7 +120,6 @@ GROUP BY
     YEAR
 HAVING 
     ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS),2)*100 > 20;
-
 
  --> Procedure
 CREATE OR REPLACE PROCEDURE TOTAL_VOTE_INC_50

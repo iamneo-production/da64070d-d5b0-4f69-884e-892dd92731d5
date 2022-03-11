@@ -155,6 +155,60 @@ WHERE
 ORDER BY 
   YEAR;
 
+EXPLAIN PLAN FOR
+    SELECT 
+      /*+NO_INDEX(ELECTION)*/YEAR "Election Year",  CAND_NAME "Candidates" 
+    FROM 
+      ELECTION 
+    WHERE 
+      ST_NAME = 'Tamil Nadu' 
+    ORDER BY 
+      YEAR;
+
+SELECT
+    PLAN_TABLE_OUTPUT
+FROM
+    TABLE(DBMS_XPLAN.DISPLAY);
+
+-->Without Index  Query performance
+/*
+Plan hash value: 2629626777
+		
+-------------------------------------------------------------------------------
+	
+| Id | Operation | Name | Rows | Bytes | Cost (%CPU)| Time |
+	
+-------------------------------------------------------------------------------
+	
+| 0 | SELECT STATEMENT | | 5309 | 176K| 240 (1)| 00:00:01 |
+	
+| 1 | SORT ORDER BY | | 5309 | 176K| 240 (1)| 00:00:01 |
+	
+|* 2 | TABLE ACCESS FULL| ELECTION | 5309 | 176K| 239 (1)| 00:00:01 |
+	
+-------------------------------------------------------------------------------
+
+-->With Index  Query performance
+
+Plan hash value: 3362854993
+		
+---------------------------------------------------------------------------------------------------
+	
+| Id | Operation | Name | Rows | Bytes | Cost (%CPU)| Time |
+	
+---------------------------------------------------------------------------------------------------
+	
+| 0 | SELECT STATEMENT | | 5309 | 176K| 83 (2)| 00:00:01 |
+	
+| 1 | SORT ORDER BY | | 5309 | 176K| 83 (2)| 00:00:01 |
+	
+| 2 | TABLE ACCESS BY INDEX ROWID BATCHED| ELECTION | 5309 | 176K| 82 (0)| 00:00:01 |
+	
+|* 3 | INDEX RANGE SCAN | INDEX_NAME | 5309 | | 17 (0)| 00:00:01 |
+	
+---------------------------------------------------------------------------------------------------
+*/
+
 --> Procedure
 
 CREATE OR REPLACE PROCEDURE PARTIES

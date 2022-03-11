@@ -177,8 +177,29 @@ SELECT
     PLAN_TABLE_OUTPUT
 FROM
     TABLE(DBMS_XPLAN.DISPLAY);
-
-
+/*
+	
+PLAN_TABLE_OUTPUT
+	
+Plan hash value: 3362854993
+	
+	
+---------------------------------------------------------------------------------------------------
+	
+| Id | Operation | Name | Rows | Bytes | Cost (%CPU)| Time |
+	
+---------------------------------------------------------------------------------------------------
+	
+| 0 | SELECT STATEMENT | | 59 | 2006 | 3 (34)| 00:00:01 |
+	
+| 1 | SORT ORDER BY | | 59 | 2006 | 3 (34)| 00:00:01 |
+	
+| 2 | TABLE ACCESS BY INDEX ROWID BATCHED| ELECTION | 59 | 2006 | 2 (0)| 00:00:01 |
+	
+|* 3 | INDEX RANGE SCAN | INDEX_NAME | 59 | | 1 (0)| 00:00:01 |
+	
+---------------------------------------------------------------------------------------------------
+*/
 --> Procedure
 
 CREATE OR REPLACE PROCEDURE SIK_CAND_YEAR

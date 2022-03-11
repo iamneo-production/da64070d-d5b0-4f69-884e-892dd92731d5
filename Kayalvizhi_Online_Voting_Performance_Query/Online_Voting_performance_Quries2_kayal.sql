@@ -293,3 +293,14 @@ BEGIN
   TAMILNADU_CAND_LIST_YEAR();
 END;
 /
+
+DECLARE
+    starting_time  TIMESTAMP WITH TIME ZONE;
+    ending_time    TIMESTAMP WITH TIME ZONE;
+BEGIN
+   SELECT SYSTIMESTAMP INTO starting_time FROM DUAL;
+   TAMILNADU_CAND_LIST_YEAR();
+   SELECT SYSTIMESTAMP INTO ending_time FROM DUAL;
+   DBMS_OUTPUT.PUT_LINE('Time = ' || TO_CHAR(ending_time - starting_time));
+END;
+/

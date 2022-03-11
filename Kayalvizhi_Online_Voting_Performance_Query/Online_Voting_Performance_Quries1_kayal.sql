@@ -6,19 +6,28 @@ ON ELECTION(ST_NAME,YEAR,PARTYABBRE,TOTVOTPOLL,ELECTORS);
 -->1. Find the total candidates who participated in the election in each state in the year 2004?
 -->Query
 SELECT
-   * 
+   ST_NAME "State", COUNT(CAND_NAME) "Total Candidates"
 FROM 
    ELECTION 
 WHERE 
-   PARTYABBRE ='BJP';
+   PARTYABBRE ='BJP'
+AND
+   YEAR = 2004
+GROUP BY
+   ST_NAME ;
+
 -->EXPLAIN PLAN
 EXPLAIN PLAN FOR
    SELECT
-      * 
+      ST_NAME "State", COUNT(CAND_NAME) "Total candidates"
    FROM 
       ELECTION 
    WHERE 
-      PARTYABBRE ='BJP';
+      PARTYABBRE ='BJP'
+   AND 
+      YEAR = 2004;
+   GROUP BY
+      ST_NAME ;
 
 SELECT
     PLAN_TABLE_OUTPUT
@@ -61,9 +70,9 @@ BEGIN
       YEAR = 2004 
    GROUP BY 
       ST_NAME;
-  FOR idx IN 1..state.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE(state(idx))||'  '||count_cand(idx));
-  END LOOP;
+   FOR idx IN 1..state.COUNT LOOP
+      DBMS_OUTPUT.PUT_LINE(state(idx)||'  '||count_cand(idx));
+   END LOOP;
 END;
 /
 --------------------------------------------------------------------------------------------------
@@ -71,8 +80,8 @@ END;
 
 -->Query
 SELECT 
-   COUNT(CAND_SEX), 
-   YEAR 
+   YEAR,
+   COUNT(CAND_SEX) "Total Female Candidates"   
 FROM 
    ELECTION 
 WHERE 
@@ -101,7 +110,7 @@ BEGIN
    GROUP BY 
       YEAR;
   FOR idx IN 1..female_cand.COUNT LOOP
-      DBMS_OUTPUT.PUT_LINE(election_year(IDX_DOCID_COUNT)||'  '||female_cand(idx));
+      DBMS_OUTPUT.PUT_LINE(election_year(idx)||'  '||female_cand(idx));
   END LOOP;
 END;
 /
@@ -110,7 +119,7 @@ END;
 
 -->Query
 SELECT 
-   COUNT(CAND_NAME) 
+   COUNT(CAND_NAME) "Total Candidates in West Bengal 2014"
 FROM 
    ELECTION
 WHERE 
@@ -138,15 +147,15 @@ BEGIN
 END;
 /
 --------------------------------------------------------------------------------------------------
-  SELECT BENGAL_CAND_2014() FROM DUAL;
+SELECT BENGAL_CAND_2014() FROM DUAL;
 
 -->4.Find the total candidates who participated in the election at each state in each year?
 
 -->Query
 SELECT 
-   ST_NAME,
-   YEAR,
-   COUNT(CAND_NAME)
+   ST_NAME "State",
+   YEAR "Year",
+   COUNT(CAND_NAME) "Total Candidates"
 FROM 
    ELECTION 
 GROUP BY 
@@ -230,8 +239,8 @@ END;
 
 -->Query
 SELECT 
-   ST_NAME,
-   SUM(TOTVOTPOLL) 
+   ST_NAME "State",
+   SUM(TOTVOTPOLL) "Total Votes" 
 FROM 
    ELECTION 
 WHERE 
@@ -272,7 +281,7 @@ END;
 
 -->Query
 SELECT 
-   SUM(TOTVOTPOLL) 
+   SUM(TOTVOTPOLL) "Total Votes BJP in Andhra Pradesh" 
 FROM 
    ELECTION 
 WHERE 
@@ -304,7 +313,7 @@ END;
 
 -->Query
 SELECT 
-    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) "Bjp Percentage"
+    ROUND(SUM(TOTVOTPOLL)/SUM(ELECTORS)*100,2) "BJP Percentage"
 FROM 
    ELECTION 
 WHERE 
@@ -339,7 +348,7 @@ END;
 -->9. How many times has BJP gotten an Above 50% vote?
 --> Query
 SELECT 
-   COUNT(1) 
+   COUNT(1) "Total Count BJP got 50% Votes " 
 FROM 
    ELECTION 
 WHERE 
@@ -373,7 +382,7 @@ END;
 -->Query
 
 SELECT 
-   ST_NAME 
+   ST_NAME "State" 
 FROM 
    ELECTION WHERE PARTYABBRE = 'BJP' 
 AND 
@@ -515,3 +524,14 @@ WHERE
    YEAR = 1999 
 AND 
    PARTYABBRE = 'BJP';
+
+-->View all Index
+SELECT 
+    index_name, 
+    index_type, 
+    visibility, 
+    status 
+FROM 
+    all_indexes
+WHERE 
+    table_name = 'ELECTION';

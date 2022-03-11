@@ -1,6 +1,7 @@
 --perfomance Queries set 3
 
 -- 1.Write a SQL query to calculate total votes Got BJP in Bihar State in 1996?
+
 --> Query
 SELECT 
     SUM(TOTVOTPOLL) "Votes"
@@ -26,7 +27,7 @@ SELECT
 FROM
     TABLE(DBMS_XPLAN.DISPLAY);
 
-
+/*
 Plan hash value: 2055522871
 	
 	
@@ -41,7 +42,8 @@ Plan hash value: 2055522871
 | 1 | SORT AGGREGATE | | 1 | 21 | | |
 	
 |* 2 | INDEX RANGE SCAN| ELECTION_I | 1474 | 30954 | 10 (0)| 00:00:01 |
-	
+
+*/	
 --------------------------------------------------------------------------------
 -->Function
 
@@ -108,6 +110,7 @@ END;
 ------------------------------------------------------------------------------------
 
 -- 3. Find how many times congress gets above 50% vote in Bihar state?
+
 --> Query
 SELECT 
 DISTINCT YEAR,

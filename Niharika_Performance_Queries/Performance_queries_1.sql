@@ -1,3 +1,6 @@
+--Performance Queries set 1
+
+
 --1. Find the total candidates who participated in the election in each state in the year 2004?
 
 SELECT ST_NAME AS STATE, COUNT(CAND_NAME) AS CANDIDATE_COUNT  FROM ELECTION WHERE YEAR = 2004 GROUP BY ST_NAME;

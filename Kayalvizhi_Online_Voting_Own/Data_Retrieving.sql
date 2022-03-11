@@ -6,6 +6,7 @@ FROM
     ELECTION;
 ----------------------------------------------------------
 SELECT * FROM ADDRESS;
+
 SELECT 
     V.FIRST_NAME,V.DATE_OF_BIRTH,V.PASSWORD,A.DISTRICT_ID
 FROM
@@ -42,28 +43,7 @@ SELECT * FROM VOTER;
 BEGIN
    LOGIN(' 8168 4719 1549 ',' sAry4I4 ');
 END;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/
 
 CREATE OR REPLACE PROCEDURE ELECTION_1
 IS

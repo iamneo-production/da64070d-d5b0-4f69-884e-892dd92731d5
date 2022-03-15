@@ -17,7 +17,8 @@ SELECT PARTYNAME FROM ELECTION WHERE ST_NAME = 'Uttar Pradesh' and YEAR = 2014 g
 --6.Find total votes BJP got In each state in the year 1987
 SELECT ST_NAME , SUM(TOTVOTPOLL) AS VOTES FROM ELECTION WHERE YEAR = 1989 AND PARTYABBRE ='BJP' GROUP BY ST_NAME ORDER BY SUM(TOTVOTPOLL);
 
---7.Find the Total votes BJP Got in state 'andhra pradesh' in the year 1987
+--7.Find the Total votes BJP Got in state 'andhra pradesh' in the year 1987?
+SELECT SUM(TOTVOTPOLL) FROM ELECTION WHERE ST_NAME = 'Andhra Pradesh' and year = 1987;
 
 --8. Find the Total vote percentage of BJP get in goa state in the year 2003
 --IN 2004 ONLY BJP PARTICIPATED IN ELECTION

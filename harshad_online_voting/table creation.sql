@@ -230,5 +230,5 @@ select * from constituency_info;
 --		FOREIGN KEY (candidate_id)  REFERENCES candidate (candidate_id)  ON DELETE CASCADE,
 --		FOREIGN KEY (party_id)  REFERENCES party (party_id)  ON DELETE CASCADE,
 --		FOREIGN KEY (Election_id)  REFERENCES Election (election_id)  ON DELETE CASCADE,
---		FOREIGN KEY (district_id) REFERENCES district (district_id) ON DELETE CASCADE);
+---		FOREIGN KEY (district_id) REFERENCES district (district_id) ON DELETE CASCADE);
 --drop table LOKSHABA_RESULT;
